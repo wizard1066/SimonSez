@@ -98,11 +98,11 @@ struct ContentView: View {
       HStack {
         Button(action: {
           withAnimation(.linear(duration: 0.25)){
-            self.tLeft = !self.tLeft
+            self.tLeft.toggle()
           }
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
             withAnimation(.linear(duration: 0.25)){
-              self.tLeft = !self.tLeft
+              self.tLeft.toggle()
             }
           })
           quest = quest + "1"
