@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,11 @@
 		7BBE77512429F570002DB601 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7BBE77502429F570002DB601 /* Assets.xcassets */; };
 		7BBE77542429F570002DB601 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7BBE77532429F570002DB601 /* Preview Assets.xcassets */; };
 		7BBE77572429F570002DB601 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7BBE77552429F570002DB601 /* LaunchScreen.storyboard */; };
+		7BBE775F2429F5CF002DB601 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BBE775E2429F5CF002DB601 /* Common.swift */; };
+		7BBE77612429F5D7002DB601 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BBE77602429F5D7002DB601 /* Storage.swift */; };
+		7BBE77632429F5E4002DB601 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BBE77622429F5E4002DB601 /* Crypto.swift */; };
+		7BBE77662429F9BC002DB601 /* RemoteNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BBE77652429F9BC002DB601 /* RemoteNotifications.swift */; };
+		7BBE77692429FB71002DB601 /* SwiftJWT in Frameworks */ = {isa = PBXBuildFile; productRef = 7BBE77682429FB71002DB601 /* SwiftJWT */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +29,11 @@
 		7BBE77532429F570002DB601 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7BBE77562429F570002DB601 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7BBE77582429F570002DB601 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7BBE775E2429F5CF002DB601 /* Common.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		7BBE77602429F5D7002DB601 /* Storage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		7BBE77622429F5E4002DB601 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
+		7BBE77642429F606002DB601 /* SimonSez.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimonSez.entitlements; sourceTree = "<group>"; };
+		7BBE77652429F9BC002DB601 /* RemoteNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteNotifications.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BBE77692429FB71002DB601 /* SwiftJWT in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,10 +67,15 @@
 		7BBE77492429F56C002DB601 /* SimonSez */ = {
 			isa = PBXGroup;
 			children = (
+				7BBE77642429F606002DB601 /* SimonSez.entitlements */,
 				7BBE774A2429F56D002DB601 /* AppDelegate.swift */,
+				7BBE77652429F9BC002DB601 /* RemoteNotifications.swift */,
+				7BBE77622429F5E4002DB601 /* Crypto.swift */,
 				7BBE774C2429F56D002DB601 /* SceneDelegate.swift */,
 				7BBE774E2429F56D002DB601 /* ContentView.swift */,
+				7BBE77602429F5D7002DB601 /* Storage.swift */,
 				7BBE77502429F570002DB601 /* Assets.xcassets */,
+				7BBE775E2429F5CF002DB601 /* Common.swift */,
 				7BBE77552429F570002DB601 /* LaunchScreen.storyboard */,
 				7BBE77582429F570002DB601 /* Info.plist */,
 				7BBE77522429F570002DB601 /* Preview Content */,
@@ -91,6 +107,9 @@
 			dependencies = (
 			);
 			name = SimonSez;
+			packageProductDependencies = (
+				7BBE77682429FB71002DB601 /* SwiftJWT */,
+			);
 			productName = SimonSez;
 			productReference = 7BBE77472429F56C002DB601 /* SimonSez.app */;
 			productType = "com.apple.product-type.application";
@@ -119,6 +138,9 @@
 				Base,
 			);
 			mainGroup = 7BBE773E2429F56C002DB601;
+			packageReferences = (
+				7BBE77672429FB71002DB601 /* XCRemoteSwiftPackageReference "Swift-JWT" */,
+			);
 			productRefGroup = 7BBE77482429F56C002DB601 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -146,9 +168,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BBE77632429F5E4002DB601 /* Crypto.swift in Sources */,
+				7BBE775F2429F5CF002DB601 /* Common.swift in Sources */,
 				7BBE774B2429F56D002DB601 /* AppDelegate.swift in Sources */,
 				7BBE774D2429F56D002DB601 /* SceneDelegate.swift in Sources */,
 				7BBE774F2429F56D002DB601 /* ContentView.swift in Sources */,
+				7BBE77612429F5D7002DB601 /* Storage.swift in Sources */,
+				7BBE77662429F9BC002DB601 /* RemoteNotifications.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -284,6 +310,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SimonSez/SimonSez.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SimonSez/Preview Content\"";
 				DEVELOPMENT_TEAM = CWGS87U262;
@@ -304,6 +331,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SimonSez/SimonSez.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SimonSez/Preview Content\"";
 				DEVELOPMENT_TEAM = CWGS87U262;
@@ -342,6 +370,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7BBE77672429FB71002DB601 /* XCRemoteSwiftPackageReference "Swift-JWT" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/IBM-Swift/Swift-JWT";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.6.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7BBE77682429FB71002DB601 /* SwiftJWT */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7BBE77672429FB71002DB601 /* XCRemoteSwiftPackageReference "Swift-JWT" */;
+			productName = SwiftJWT;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7BBE773F2429F56C002DB601 /* Project object */;
 }
