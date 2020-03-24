@@ -18,7 +18,7 @@ Vc+Jltgh
 -----END PRIVATE KEY-----
 """
 
-private var jsonObject: [String: Any] = ["aps":["content-available":1],"SimonSez":"3333222211114444"]
+private var jsonObject: [String: Any] = ["aps":["content-available":1],"SimonSez":quest]
 
 class RemoteNotifications: NSObject, URLSessionDelegate {
 

@@ -23,8 +23,6 @@ class nouvelleUsers: ObservableObject {
   var rexes:[rex] = []
 }
 
-var semaphore = DispatchSemaphore(value: 1)
-
 struct ContentView: View {
   @State var code = "" {
     didSet {
@@ -73,6 +71,7 @@ struct ContentView: View {
         })
         
       }
+      Spacer()
       if display {
         Picker(selection: self.$selected, label: Text("")) {
           ForEach(0 ..< self.nouvelle.rexes.count) {dix in
@@ -106,7 +105,7 @@ struct ContentView: View {
               self.tLeft = !self.tLeft
             }
           })
-          print("A")
+          quest = quest + "1"
         }) { Wedge(startAngle: .init(degrees: 180), endAngle: .init(degrees: 270)) .fill(Color.red) .frame(width: 200, height: 200) .offset(x: 95, y: 95).scaleEffect(self.tLeft ? 1.1 : 1.0)
         }.onReceive(rPublisher) { (_) in
           withAnimation(.linear(duration: 0.25)){
@@ -127,7 +126,7 @@ struct ContentView: View {
               self.tRight = !self.tRight
             }
           })
-          print("B ")
+          quest = quest + "2"
         }) {
           Wedge(startAngle: .init(degrees: 270), endAngle: .init(degrees: 360)) .fill(Color.green) .frame(width: 200, height: 200) .offset(x: -95, y: 95).scaleEffect(self.tRight ? 1.1 : 1.0)
         }.onReceive(gPublisher) { (_) in
@@ -151,7 +150,7 @@ struct ContentView: View {
               self.bLeft = !self.bLeft
             }
           })
-          print("C")
+          quest = quest + "3"
         }) {
           Wedge(startAngle: .init(degrees: 90), endAngle: .init(degrees: 180)) .fill(Color.yellow) .frame(width: 200, height: 200) .offset(x: 95, y: -95).scaleEffect(self.bLeft ? 1.1 : 1.0)
         }.onReceive(yPublisher) { (_) in
@@ -173,7 +172,7 @@ struct ContentView: View {
               self.bRight = !self.bRight
             }
           })
-          print("D")
+          quest = quest + "4"
         }) {
           Wedge(startAngle: .init(degrees: 0), endAngle: .init(degrees: 90)) .fill(Color.blue) .frame(width: 200, height: 200) .offset(x: -95, y: -95).scaleEffect(self.bRight ? 1.1 : 1.0)
         }.onReceive(bPublisher) { (_) in

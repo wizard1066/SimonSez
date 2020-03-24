@@ -11,6 +11,8 @@ import UIKit
 var coder: String!
 var token: String!
 
+var quest: String = ""
+
 class Common: NSObject {
   // do nothing
 }

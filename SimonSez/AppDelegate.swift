@@ -73,44 +73,32 @@ func registerForNotifications() {
   func application( _ application: UIApplication,
                didReceiveRemoteNotification userInfo: [AnyHashable : Any],
                fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+               
+    UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+      guard (settings.authorizationStatus == .authorized ||
+      settings.authorizationStatus == .provisional) else { return }
+    }
+
     debugPrint("didReceiveRemoteNotification: \(userInfo)")
     let simonSez = userInfo["SimonSez"] as? String?
-    var delay = 1.0
     if simonSez != nil {
       let buttonsToFire = simonSez!!.map( { String($0) })
-      print("b2F ",buttonsToFire)
-      execAfterDelay(value: buttonsToFire)
-//      for b2F in buttonsToFire {
-//        switch b2F {
-//        case "1":
-//          DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: { rPublisher.send();print("1",delay);delay += 4.0 })
-//        case "2":
-//          DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: { gPublisher.send();print("2",delay);delay += 4.0 })
-//        case "3":
-//          DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: { yPublisher.send();print("3",delay);delay += 4.0 })
-//        default:
-//          // case 4
-//          DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: { bPublisher.send();print("4",delay);delay += 4.0 })
-//        }
-//
-//      }
-      
+      execAfterDelay(value: buttonsToFire.reversed())
     }
     completionHandler(.newData)
   }
   
   func execAfterDelay(value:[String]) {
     var copyC = value
-    var nextC = copyC.popLast()
+    let nextC = copyC.popLast()
     if nextC != nil {
       DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
         self.execAfterDelay(value: copyC)
-        print("nextC ",nextC)
         switch nextC {
-          case "1": DispatchQueue.main.async { rPublisher.send() }
-          case "2": DispatchQueue.main.async { gPublisher.send() }
-          case "3": DispatchQueue.main.async { yPublisher.send() }
-          default: DispatchQueue.main.async { bPublisher.send() }
+          case "1": rPublisher.send()
+          case "2": gPublisher.send()
+          case "3": yPublisher.send()
+          default: bPublisher.send()
         }
       }
     }
