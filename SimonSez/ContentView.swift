@@ -19,6 +19,7 @@ let gPublisher = PassthroughSubject<Void, Never>()
 let yPublisher = PassthroughSubject<Void, Never>()
 let bPublisher = PassthroughSubject<Void, Never>()
 let cPublisher = PassthroughSubject<Bool, Never>()
+let aPublisher = PassthroughSubject<Bool, Never>()
 
 class nouvelleUsers: ObservableObject {
   var rexes:[rex] = []
@@ -30,21 +31,23 @@ struct ContentView: View {
       coder = self.code
     }
   }
-  @State var selected = 0
-  @State var nouvelle = nouvelleUsers()
-  @State var display = false
-  @State var color = Color.red
-  @State var tLeft = false
-  @State var tRight = false
-  @State var bLeft = false
-  @State var bRight = false
-  @State var post:String? = ""
+  @State private var selected = 0
+  @State private var nouvelle = nouvelleUsers()
+  @State private var display = false
+  @State private var color = Color.red
+  @State private var tLeft = false
+  @State private var tRight = false
+  @State private var bLeft = false
+  @State private var bRight = false
+  @State private var post:String? = ""
   @State private var showingAlert = false
-  @State var peer = ""
-  @State var simonSez = ""
-  @State var showSuccess = false
-  @State var showFail = false
-  @State var challengeBon = false
+  @State private var peer = ""
+  @State private var simonSez = ""
+  @State private var showSuccess = false
+  @State private var showFail = false
+  @State private var challengeBon = false
+  @State private var controls = false
+  @State private var responseBon = false
   
   
   var body: some View {
@@ -62,6 +65,8 @@ struct ContentView: View {
           Alert(title: Text("Important message"), message: Text("Code " + self.peer), dismissButton: .default(Text("Got it!")))
       }.onReceive(cPublisher) { (_) in
         self.challengeBon = true
+      }.onReceive(aPublisher) { (_) in
+        self.responseBon = true
       }
       Spacer()
       Button(action: {
@@ -103,43 +108,48 @@ struct ContentView: View {
               // post a copy of my token and my code
               let jsonObject: [String: Any] = ["aps":["content-available":1],"token":token!,"code":self.code]
               poster.postNotification(postTo: self.post!, jsonObject: jsonObject)
+              self.controls = true
             }
         }.clipped()
           .frame(width: 128, height: 96, alignment: .center)
       }
-//      Spacer(minLength: 64)
-      Button(action: {
-        if self.post != nil {
-          let jsonObject: [String: Any] = ["aps":["content-available":1],"SimonSez":quest]
-          poster.postNotification(postTo: self.post!, jsonObject: jsonObject)
-          quest = ""
-        }
-      }) {
-        Text("Challenge").alert(isPresented: $showSuccess) {
-          Alert(title: Text("Important message"), message: Text("You are a Wizard"), dismissButton: .default(Text("Got it!")))
-        }
-      }.disabled(challengeBon)
-      Button(action: {
-        print("quest ",self.simonSez)
-        let jsonObject: [String: Any] = ["aps":["content-available":1],"Toogle":true]
-        poster.postNotification(postTo: peerToken!, jsonObject: jsonObject)
-        self.challengeBon = false
-        if quest == self.simonSez {
-          print("cheese")
-          self.showSuccess = true
-          quest = ""
-        } else {
-          self.showFail = true
-          print("fooBar")
-          quest = ""
-        }
-      }) {
-        Text("Response").onReceive(simonSezPublisher) { ( data ) in
-          self.simonSez = data
-        }.alert(isPresented: $showFail) {
+
+      
+      if controls {
+        Button(action: {
+          if self.post != nil {
+            let jsonObject: [String: Any] = ["aps":["content-available":1],"SimonSez":quest]
+            poster.postNotification(postTo: self.post!, jsonObject: jsonObject)
+            quest = ""
+          }
+        }) {
+          Text("Challenge").alert(isPresented: $showSuccess) {
+            Alert(title: Text("Important message"), message: Text("You are a Wizard"), dismissButton: .default(Text("Got it!")))
+          }
+        }.disabled(challengeBon)
+        Button(action: {
+          print("quest ",self.simonSez)
+          let jsonObject: [String: Any] = ["aps":["content-available":1],"Toogle":true]
+          poster.postNotification(postTo: peerToken!, jsonObject: jsonObject)
+          self.challengeBon = false
+          if quest == self.simonSez {
+            print("cheese")
+            self.showSuccess = true
+            quest = ""
+          } else {
+            self.showFail = true
+            print("fooBar")
+            quest = ""
+          }
+        }) {
+          Text("Response").onReceive(simonSezPublisher) { ( data ) in
+            self.simonSez = data
+          }.alert(isPresented: $showFail) {
             Alert(title: Text("Important message"), message: Text("You are a Moron"), dismissButton: .default(Text("Got it!")))
+          }.disabled(challengeBon)
         }
       }
+      
       HStack {
         Button(action: {
           self.animate(slice: "red")
