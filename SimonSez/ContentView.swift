@@ -97,99 +97,147 @@ struct ContentView: View {
       }
       HStack {
         Button(action: {
-          withAnimation(.linear(duration: 0.25)){
-            self.tLeft.toggle()
-          }
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-            withAnimation(.linear(duration: 0.25)){
-              self.tLeft.toggle()
-            }
-          })
+          self.animate(slice: "red")
           quest = quest + "1"
         }) { Wedge(startAngle: .init(degrees: 180), endAngle: .init(degrees: 270)) .fill(Color.red) .frame(width: 200, height: 200) .offset(x: 95, y: 95).scaleEffect(self.tLeft ? 1.1 : 1.0)
         }.onReceive(rPublisher) { (_) in
-          withAnimation(.linear(duration: 0.25)){
-            self.tLeft.toggle()
-          }
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-            withAnimation(.linear(duration: 0.25)){
-              self.tLeft.toggle()
-            }
-          })
+          self.animateRed()
         }
         Button(action: {
-          withAnimation(.linear(duration: 0.25)){
-            self.tRight = !self.tRight
-          }
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-            withAnimation(.linear(duration: 0.25)){
-              self.tRight = !self.tRight
-            }
-          })
+          self.animateGreen()
           quest = quest + "2"
         }) {
           Wedge(startAngle: .init(degrees: 270), endAngle: .init(degrees: 360)) .fill(Color.green) .frame(width: 200, height: 200) .offset(x: -95, y: 95).scaleEffect(self.tRight ? 1.1 : 1.0)
         }.onReceive(gPublisher) { (_) in
-          withAnimation(.linear(duration: 0.25)){
-            self.tRight = !self.tRight
-          }
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-            withAnimation(.linear(duration: 0.25)){
-              self.tRight = !self.tRight
-            }
-          })
+          self.animateGreen()
         }
       }
       HStack {
         Button(action: {
-          withAnimation(.linear(duration: 0.25)){
-            self.bLeft = !self.bLeft
-          }
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-            withAnimation(.linear(duration: 0.25)){
-              self.bLeft = !self.bLeft
-            }
-          })
+          self.animateYellow()
           quest = quest + "3"
         }) {
           Wedge(startAngle: .init(degrees: 90), endAngle: .init(degrees: 180)) .fill(Color.yellow) .frame(width: 200, height: 200) .offset(x: 95, y: -95).scaleEffect(self.bLeft ? 1.1 : 1.0)
         }.onReceive(yPublisher) { (_) in
-          withAnimation(.linear(duration: 0.25)){
-            self.bLeft = !self.bLeft
-          }
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-            withAnimation(.linear(duration: 0.25)){
-              self.bLeft = !self.bLeft
-            }
-          })
+          self.animateYellow()
         }
         Button(action: {
-          withAnimation(.linear(duration: 0.25)){
-            self.bRight = !self.bRight
-          }
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-            withAnimation(.linear(duration: 0.25)){
-              self.bRight = !self.bRight
-            }
-          })
+          self.animateBlue()
           quest = quest + "4"
         }) {
           Wedge(startAngle: .init(degrees: 0), endAngle: .init(degrees: 90)) .fill(Color.blue) .frame(width: 200, height: 200) .offset(x: -95, y: -95).scaleEffect(self.bRight ? 1.1 : 1.0)
         }.onReceive(bPublisher) { (_) in
-          withAnimation(.linear(duration: 0.25)){
-            self.bRight = !self.bRight
-          }
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-            withAnimation(.linear(duration: 0.25)){
-              self.bRight = !self.bRight
-            }
-          })
+          self.animateBlue()
         }
       }
     }
   }
   
+  private func animate(slice: String) {
+    animateAction(slice: slice)
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+      self.animateAction(slice: slice)
+    })
+  }
+  
+  private func animateAction(slice: String) {
+    withAnimation(.linear(duration: 0.25)){
+      switch slice {
+        case "red": self.tLeft.toggle()
+        case "green": self.tRight.toggle()
+        case "yellow": self.bLeft.toggle()
+        // blue is the only other slice
+        default: self.bRight.toggle()
+      }
+    }
+  }
+  
+//  private func animateSliceX(slice: String) {
+//    var ptr = UnsafeMutablePointer<Bool>.allocate(capacity: 1)
+//    switch slice {
+//    case "red": ptr = &tLeft
+//    case "green": ptr = &tRight
+//    case "yellow": ptr = &bLeft
+//    default: ptr = &bRight
+//    }
+//    withAnimation(.linear(duration: 0.25)){
+//      ptr.toggle()
+//    }
+//    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+//      withAnimation(.linear(duration: 0.25)){
+//        ptr.toggle()
+//      }
+//    })
+//  }
+  
+//  private func animateSliceV(slice: String) {
+//    switch slice {
+//      case "red": DispatchQueue.main.async { rPublisher.send() }
+//      case "green": gPublisher.send(); break
+//      case "yellow": yPublisher.send(); break
+//       blue is the only other alternative
+//      default: DispatchQueue.main.async { bPublisher.send() }
+//    }
+//  }
+  
+//  private func animateSlice(slice: Bool) {
+//    var sliceCopy = slice
+//    withAnimation(.linear(duration: 0.25)){
+//      sliceCopy.toggle()
+//    }
+//    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+//      withAnimation(.linear(duration: 0.25)){
+//        sliceCopy.toggle()
+//      }
+//    })
+//  }
+  
+  private func animateRed() {
+  withAnimation(.linear(duration: 0.25)){
+    self.tLeft.toggle()
+  }
+  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+    withAnimation(.linear(duration: 0.25)){
+      self.tLeft.toggle()
+    }
+  })
+  }
+  
+  private func animateGreen() {
+  withAnimation(.linear(duration: 0.25)){
+    self.tRight.toggle()
+  }
+  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+    withAnimation(.linear(duration: 0.25)){
+      self.tRight.toggle()
+    }
+  })
+  }
+  
+  private func animateYellow() {
+  withAnimation(.linear(duration: 0.25)){
+    self.bLeft.toggle()
+  }
+  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+    withAnimation(.linear(duration: 0.25)){
+      self.bLeft.toggle()
+    }
+  })
+  }
+  
+  private func animateBlue() {
+  withAnimation(.linear(duration: 0.25)){
+    self.bRight.toggle()
+  }
+  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+    withAnimation(.linear(duration: 0.25)){
+      self.bRight.toggle()
+    }
+  })
+  }
 }
+
+
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
