@@ -11,6 +11,8 @@ import UserNotifications
 import Combine
 
 let challengePublisher = PassthroughSubject<String, Never>()
+let alertPublisher = PassthroughSubject<String, Never>()
+let simonSezPublisher = PassthroughSubject<String, Never>()
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -81,10 +83,27 @@ func registerForNotifications() {
 
     debugPrint("didReceiveRemoteNotification: \(userInfo)")
     let simonSez = userInfo["SimonSez"] as? String?
-    if simonSez != nil {
+    if simonSez! != nil {
       let buttonsToFire = simonSez!!.map( { String($0) })
       execAfterDelay(value: buttonsToFire.reversed())
+      simonSezPublisher.send(simonSez!!)
     }
+    
+    let code = userInfo["code"] as? String?
+    let peer = userInfo["token"] as? String?
+    if peer! != nil {
+      peerToken = peer!
+    }
+    if code! != nil {
+      print("peer code")
+      alertPublisher.send(code!!)
+    }
+    
+    let toggle = userInfo["toggle"] as? Bool?
+    if toggle != nil {
+      cPublisher.send(true)
+    }
+    
     completionHandler(.newData)
   }
   
@@ -104,12 +123,7 @@ func registerForNotifications() {
     }
   }
   
-  func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
   
-    let userInfo = notification.request.content.userInfo["aps"]! as! Dictionary<String, Any>
-    debugPrint("willPresent: \(userInfo)")
-    completionHandler([.alert, .badge, .sound])
-  }
   
   
 }

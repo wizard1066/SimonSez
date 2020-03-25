@@ -18,6 +18,7 @@ let rPublisher = PassthroughSubject<Void, Never>()
 let gPublisher = PassthroughSubject<Void, Never>()
 let yPublisher = PassthroughSubject<Void, Never>()
 let bPublisher = PassthroughSubject<Void, Never>()
+let cPublisher = PassthroughSubject<Bool, Never>()
 
 class nouvelleUsers: ObservableObject {
   var rexes:[rex] = []
@@ -38,6 +39,12 @@ struct ContentView: View {
   @State var bLeft = false
   @State var bRight = false
   @State var post:String? = ""
+  @State private var showingAlert = false
+  @State var peer = ""
+  @State var simonSez = ""
+  @State var showSuccess = false
+  @State var showFail = false
+  @State var challengeBon = false
   
   
   var body: some View {
@@ -46,6 +53,16 @@ struct ContentView: View {
         //        cloud.cleanUp()
       }
       Text(code)
+        .onReceive(alertPublisher, perform: { ( code ) in
+          self.peer = code
+          self.showingAlert = true
+          self.challengeBon = true
+        })
+        .alert(isPresented: $showingAlert) {
+          Alert(title: Text("Important message"), message: Text("Code " + self.peer), dismissButton: .default(Text("Got it!")))
+      }.onReceive(cPublisher) { (_) in
+        self.challengeBon = true
+      }
       Spacer()
       Button(action: {
         if self.code == "" {
@@ -83,17 +100,45 @@ struct ContentView: View {
             if self.nouvelle.rexes.count > 0 {
               print("play ",self.nouvelle.rexes[self.selected].token!)
               self.post = self.nouvelle.rexes[self.selected].token!
+              // post a copy of my token and my code
+              let jsonObject: [String: Any] = ["aps":["content-available":1],"token":token!,"code":self.code]
+              poster.postNotification(postTo: self.post!, jsonObject: jsonObject)
             }
         }.clipped()
           .frame(width: 128, height: 96, alignment: .center)
       }
-      Spacer(minLength: 64)
+//      Spacer(minLength: 64)
       Button(action: {
         if self.post != nil {
-          poster.postNotification(postTo: self.post!)
+          let jsonObject: [String: Any] = ["aps":["content-available":1],"SimonSez":quest]
+          poster.postNotification(postTo: self.post!, jsonObject: jsonObject)
+          quest = ""
         }
       }) {
-        Text("Challenge")
+        Text("Challenge").alert(isPresented: $showSuccess) {
+          Alert(title: Text("Important message"), message: Text("You are a Wizard"), dismissButton: .default(Text("Got it!")))
+        }
+      }.disabled(challengeBon)
+      Button(action: {
+        print("quest ",self.simonSez)
+        let jsonObject: [String: Any] = ["aps":["content-available":1],"Toogle":true]
+        poster.postNotification(postTo: peerToken!, jsonObject: jsonObject)
+        self.challengeBon = false
+        if quest == self.simonSez {
+          print("cheese")
+          self.showSuccess = true
+          quest = ""
+        } else {
+          self.showFail = true
+          print("fooBar")
+          quest = ""
+        }
+      }) {
+        Text("Response").onReceive(simonSezPublisher) { ( data ) in
+          self.simonSez = data
+        }.alert(isPresented: $showFail) {
+            Alert(title: Text("Important message"), message: Text("You are a Moron"), dismissButton: .default(Text("Got it!")))
+        }
       }
       HStack {
         Button(action: {
@@ -101,25 +146,25 @@ struct ContentView: View {
           quest = quest + "1"
         }) { Wedge(startAngle: .init(degrees: 180), endAngle: .init(degrees: 270)) .fill(Color.red) .frame(width: 200, height: 200) .offset(x: 95, y: 95).scaleEffect(self.tLeft ? 1.1 : 1.0)
         }.onReceive(rPublisher) { (_) in
-          self.animateRed()
+          self.animate(slice: "red")
         }
         Button(action: {
-          self.animateGreen()
+          self.animateSlice(slice: self.$tRight)
           quest = quest + "2"
         }) {
           Wedge(startAngle: .init(degrees: 270), endAngle: .init(degrees: 360)) .fill(Color.green) .frame(width: 200, height: 200) .offset(x: -95, y: 95).scaleEffect(self.tRight ? 1.1 : 1.0)
         }.onReceive(gPublisher) { (_) in
-          self.animateGreen()
+          self.animateSlice(slice: self.$tRight)
         }
       }
       HStack {
         Button(action: {
-          self.animateYellow()
+          self.animate(slice: "yellow")
           quest = quest + "3"
         }) {
           Wedge(startAngle: .init(degrees: 90), endAngle: .init(degrees: 180)) .fill(Color.yellow) .frame(width: 200, height: 200) .offset(x: 95, y: -95).scaleEffect(self.bLeft ? 1.1 : 1.0)
         }.onReceive(yPublisher) { (_) in
-          self.animateYellow()
+          self.animate(slice: "yellow")
         }
         Button(action: {
           self.animateBlue()
@@ -150,6 +195,17 @@ struct ContentView: View {
         default: self.bRight.toggle()
       }
     }
+  }
+  
+  private func animateSlice(slice: Binding<Bool>) {
+          withAnimation(.linear(duration: 0.25)){
+            slice.wrappedValue.toggle()
+          }
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+            withAnimation(.linear(duration: 0.25)){
+              slice.wrappedValue.toggle()
+            }
+          })
   }
   
 //  private func animateSliceX(slice: String) {
@@ -192,38 +248,38 @@ struct ContentView: View {
 //    })
 //  }
   
-  private func animateRed() {
-  withAnimation(.linear(duration: 0.25)){
-    self.tLeft.toggle()
-  }
-  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-    withAnimation(.linear(duration: 0.25)){
-      self.tLeft.toggle()
-    }
-  })
-  }
-  
-  private func animateGreen() {
-  withAnimation(.linear(duration: 0.25)){
-    self.tRight.toggle()
-  }
-  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-    withAnimation(.linear(duration: 0.25)){
-      self.tRight.toggle()
-    }
-  })
-  }
-  
-  private func animateYellow() {
-  withAnimation(.linear(duration: 0.25)){
-    self.bLeft.toggle()
-  }
-  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
-    withAnimation(.linear(duration: 0.25)){
-      self.bLeft.toggle()
-    }
-  })
-  }
+//  private func animateRed() {
+//  withAnimation(.linear(duration: 0.25)){
+//    self.tLeft.toggle()
+//  }
+//  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+//    withAnimation(.linear(duration: 0.25)){
+//      self.tLeft.toggle()
+//    }
+//  })
+//  }
+//
+//  private func animateGreen() {
+//  withAnimation(.linear(duration: 0.25)){
+//    self.tRight.toggle()
+//  }
+//  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+//    withAnimation(.linear(duration: 0.25)){
+//      self.tRight.toggle()
+//    }
+//  })
+//  }
+//
+//  private func animateYellow() {
+//  withAnimation(.linear(duration: 0.25)){
+//    self.bLeft.toggle()
+//  }
+//  DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: {
+//    withAnimation(.linear(duration: 0.25)){
+//      self.bLeft.toggle()
+//    }
+//  })
+//  }
   
   private func animateBlue() {
   withAnimation(.linear(duration: 0.25)){

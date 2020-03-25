@@ -10,6 +10,7 @@ import UIKit
 
 var coder: String!
 var token: String!
+var peerToken: String?
 
 var quest: String = ""
 

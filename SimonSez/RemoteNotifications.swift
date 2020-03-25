@@ -18,11 +18,11 @@ Vc+Jltgh
 -----END PRIVATE KEY-----
 """
 
-private var jsonObject: [String: Any] = ["aps":["content-available":1],"SimonSez":quest]
+
 
 class RemoteNotifications: NSObject, URLSessionDelegate {
 
-func postNotification(postTo: String) {
+func postNotification(postTo: String, jsonObject:[String: Any]) {
   print("postTo ",postTo)
   let valid = JSONSerialization.isValidJSONObject(jsonObject)
   print("valid ",valid)
