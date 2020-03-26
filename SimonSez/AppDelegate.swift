@@ -111,7 +111,7 @@ func registerForNotifications() {
     var copyC = value
     let nextC = copyC.popLast()
     if nextC != nil {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
         self.execAfterDelay(value: copyC)
         switch nextC {
           case "1": rPublisher.send()

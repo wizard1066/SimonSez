@@ -45,9 +45,8 @@ struct ContentView: View {
   @State private var simonSez = ""
   @State private var showSuccess = false
   @State private var showFail = false
-  @State private var challengeBon = false
-  @State private var controls = false
-  @State private var responseBon = false
+  @State private var challengeDisabled = false
+  @State private var responseDisabled = false
   
   
   var body: some View {
@@ -59,14 +58,18 @@ struct ContentView: View {
         .onReceive(alertPublisher, perform: { ( code ) in
           self.peer = code
           self.showingAlert = true
-          self.challengeBon = true
+          self.challengeDisabled = true
+          self.responseDisabled = true
+          self.post = peerToken
+          self.display = false
         })
         .alert(isPresented: $showingAlert) {
           Alert(title: Text("Important message"), message: Text("Code " + self.peer), dismissButton: .default(Text("Got it!")))
       }.onReceive(cPublisher) { (_) in
-        self.challengeBon = true
-      }.onReceive(aPublisher) { (_) in
-        self.responseBon = true
+        self.challengeDisabled = true
+      }.onReceive(simonSezPublisher) { ( data ) in
+        self.simonSez = data
+        self.responseDisabled = false
       }
       Spacer()
       Button(action: {
@@ -105,17 +108,18 @@ struct ContentView: View {
             if self.nouvelle.rexes.count > 0 {
               print("play ",self.nouvelle.rexes[self.selected].token!)
               self.post = self.nouvelle.rexes[self.selected].token!
+              peerToken = self.nouvelle.rexes[self.selected].token!
               // post a copy of my token and my code
               let jsonObject: [String: Any] = ["aps":["content-available":1],"token":token!,"code":self.code]
               poster.postNotification(postTo: self.post!, jsonObject: jsonObject)
-              self.controls = true
+              self.responseDisabled = true
             }
         }.clipped()
           .frame(width: 128, height: 96, alignment: .center)
       }
 
       
-      if controls {
+      
         Button(action: {
           if self.post != nil {
             let jsonObject: [String: Any] = ["aps":["content-available":1],"SimonSez":quest]
@@ -126,12 +130,13 @@ struct ContentView: View {
           Text("Challenge").alert(isPresented: $showSuccess) {
             Alert(title: Text("Important message"), message: Text("You are a Wizard"), dismissButton: .default(Text("Got it!")))
           }
-        }.disabled(challengeBon)
+        }.disabled(challengeDisabled)
         Button(action: {
           print("quest ",self.simonSez)
           let jsonObject: [String: Any] = ["aps":["content-available":1],"Toogle":true]
           poster.postNotification(postTo: peerToken!, jsonObject: jsonObject)
-          self.challengeBon = false
+          self.challengeDisabled = false
+          self.responseDisabled = true
           if quest == self.simonSez {
             print("cheese")
             self.showSuccess = true
@@ -142,13 +147,12 @@ struct ContentView: View {
             quest = ""
           }
         }) {
-          Text("Response").onReceive(simonSezPublisher) { ( data ) in
-            self.simonSez = data
-          }.alert(isPresented: $showFail) {
+          Text("Response")
+          .alert(isPresented: $showFail) {
             Alert(title: Text("Important message"), message: Text("You are a Moron"), dismissButton: .default(Text("Got it!")))
-          }.disabled(challengeBon)
+          }.disabled(responseDisabled)
         }
-      }
+      
       
       HStack {
         Button(action: {
