@@ -55,12 +55,12 @@ struct ContentView: View {
         //        cloud.cleanUp()
       }
       Text(code)
-        .onReceive(alertPublisher, perform: { ( code ) in
-          self.peer = code
+        .onReceive(alertPublisher, perform: { ( codes ) in
+          (self.post, self.peer) = codes
           self.showingAlert = true
           self.challengeDisabled = true
           self.responseDisabled = true
-          self.post = peerToken
+//          self.post = peerToken
           self.display = false
         })
         .alert(isPresented: $showingAlert) {
@@ -108,11 +108,12 @@ struct ContentView: View {
             if self.nouvelle.rexes.count > 0 {
               print("play ",self.nouvelle.rexes[self.selected].token!)
               self.post = self.nouvelle.rexes[self.selected].token!
-              peerToken = self.nouvelle.rexes[self.selected].token!
+//              peerToken = self.nouvelle.rexes[self.selected].token!
               // post a copy of my token and my code
               let jsonObject: [String: Any] = ["aps":["content-available":1],"token":token!,"code":self.code]
               poster.postNotification(postTo: self.post!, jsonObject: jsonObject)
               self.responseDisabled = true
+              self.display = false
             }
         }.clipped()
           .frame(width: 128, height: 96, alignment: .center)
@@ -134,7 +135,7 @@ struct ContentView: View {
         Button(action: {
           print("quest ",self.simonSez)
           let jsonObject: [String: Any] = ["aps":["content-available":1],"Toogle":true]
-          poster.postNotification(postTo: peerToken!, jsonObject: jsonObject)
+          poster.postNotification(postTo: self.post!, jsonObject: jsonObject)
           self.challengeDisabled = false
           self.responseDisabled = true
           if quest == self.simonSez {

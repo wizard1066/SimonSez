@@ -11,7 +11,7 @@ import UserNotifications
 import Combine
 
 let challengePublisher = PassthroughSubject<String, Never>()
-let alertPublisher = PassthroughSubject<String, Never>()
+let alertPublisher = PassthroughSubject<(String,String), Never>()
 let simonSezPublisher = PassthroughSubject<String, Never>()
 
 @UIApplicationMain
@@ -91,12 +91,12 @@ func registerForNotifications() {
     
     let code = userInfo["code"] as? String?
     let peer = userInfo["token"] as? String?
-    if peer! != nil {
-      peerToken = peer!
-    }
+//    if peer! != nil {
+//      peerToken = peer!
+//    }
     if code! != nil {
       print("peer code")
-      alertPublisher.send(code!!)
+      alertPublisher.send((peer!!,code!!))
     }
     
     let toggle = userInfo["toggle"] as? Bool?
